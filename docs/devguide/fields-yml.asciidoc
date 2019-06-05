@@ -1,0 +1,72 @@
+[[event-fields-yml]]
+=== Defining field mappings
+
+Fields used by your Beat must be defined in `_meta/fields.yml`. 
+
+The fields are defined in the `fields` array:
+[source,yaml]
+----------------------------------------------------------------------
+- key: countbeat
+  title: countbeat
+  description:
+  fields:
+    - name: counter <1>
+      type: long <2>
+      required: true <3>
+      description: > <4>
+        PLEASE UPDATE DOCUMENTATION
+----------------------------------------------------------------------
+
+<1> `name`: The field name
+<2> `type`: The field type. The value for the `type` key can be any of the datatypes https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-types.html[available in Elasticsearch]. If no value is specified, the field will default to being a `keyword`.
+<3> `required`: Whether or not a field value is required
+<4> `description`: Some information about the field contents
+
+==== Other properties:
+[horizontal]
+`format`:: Specify a custom date format used by the field. See https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-date-format.html[Format].
+`multi_fields`:: For `text` or `keyword` fields, `multi_fields` can be used to define multi-fields.
+`enabled`:: Whether or not the field is enabled.
+`analyzer`:: Which analyzer to use when indexing.
+`search_analyzer`:: Which analyzer to use when searching.
+`norms`:: Applies to `text` and `keyword` fields. Default is `false`. See https://www.elastic.co/guide/en/elasticsearch/reference/current/norms.html[Norms].
+`dynamic`:: Dynamic field control. Can be one of `true` (default), `false` or `strict`. See https://www.elastic.co/guide/en/elasticsearch/reference/current/dynamic.html[Dynamic].
+`index`:: Whether or not the field should be indexed. See https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-index.html[Index].
+`doc_values`:: Whether or not the field should have doc values generated. See docs.
+`copy_to`:: See Elastic docs
+`ignore_above`:: When this property value is missing or is `0`, it receives the `libbeat` default value of `1024`. If the value is `-1`, the Elasticsearch default value will be applied. Any other specified value will be applied as-is.
+`path`:: Alias path? Only applied when Elasticsearch version is `6.4.0` or above.
+`migration`:: Migration alias?
+`dimension`:: ?
+`object_type`:: ?
+`object_type_mapping_type`:: ?
+`scaling_factor`:: ?
+`object_type_params`:: ?
+
+There are also some Kibana-specific properties, not detailed here. These are: `analyzed`, `count`, `searchable`, `aggregatable`, `script`. Kibana parameters can also be described using the `pattern`, `input_format`, `output_format`, `output_precision`, `label_template`, `url_template` and `open_link_in_current_tab` parameters.
+
+==== Defining text fields
+There are various options that can be applied when using text fields. A simple text field using the default analyzer can be defined without any other options:
+[source,yaml]
+----------------------------------------------------------------------
+- key: countbeat
+  title: countbeat
+  description:
+  fields:
+    - name: surname
+      type: text
+----------------------------------------------------------------------
+
+If you need to keep the original keyword value for use in aggregations, you can apply a multi-field mapping:
+[source,yaml]
+----------------------------------------------------------------------
+- key: countbeat
+  title: countbeat
+  description:
+  fields:
+    - name: surname
+      type: text
+      multi_fields:
+        - name: raw
+          type: keyword
+----------------------------------------------------------------------
